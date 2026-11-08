@@ -22,3 +22,21 @@ We use the [IllustrisTNG](https://www.tng-project.org/data/) hydrodynamical simu
 - `docs/` — project proposals and write-ups
 - `data/` — datasets (raw/processed); large files should not be committed
 - `notebooks/` — analysis and modeling notebooks
+- `src/` — data download and modeling scripts
+- `results/` — model comparison tables and figures
+
+## Setup
+
+1. Get a TNG API key (free registration at https://www.tng-project.org/users/register/) and put it in a `.env` file at the repo root: `TNG_API_KEY=...` (the `.env` file is gitignored — never commit it).
+2. Create the environment: `uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python requests h5py pandas numpy scikit-learn matplotlib`
+
+## Pipeline
+
+```bash
+.venv/bin/python src/download_data.py   # streams the TNG100-1 z=0 group catalog,
+                                        # keeps only central galaxies -> data/*.csv (~10 MB)
+.venv/bin/python src/train_models.py    # baseline + ridge/random forest/gradient boosting
+.venv/bin/python src/make_figures.py    # plots in results/figures/
+```
+
+**Evaluation protocol:** one fixed 60/20/20 train/validation/test split (seed 109). Models are fit on train, hyperparameters and feature sets are chosen on validation, and the test set is used exactly once at the end for the baseline and the best model.
