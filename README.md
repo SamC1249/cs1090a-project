@@ -27,14 +27,19 @@ We use the [IllustrisTNG](https://www.tng-project.org/data/) hydrodynamical simu
 
 ## Setup
 
-1. Get a TNG API key (free registration at https://www.tng-project.org/users/register/) and put it in a `.env` file at the repo root: `TNG_API_KEY=...` (the `.env` file is gitignored — never commit it).
-2. Create the environment: `uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python requests h5py pandas numpy scikit-learn matplotlib`
+The processed dataset (`data/tng100-1_snap99_centrals.csv`, 17,464 central galaxies, ~4 MB) is committed to the repo, so **no API key is needed to run the models** — just set up the environment:
+
+```bash
+uv venv .venv --python 3.12
+uv pip install --python .venv/bin/python requests h5py pandas numpy scikit-learn matplotlib
+```
+
+Only if you want to regenerate the dataset from scratch (e.g. different mass cut or extra columns): get a TNG API key (free registration at https://www.tng-project.org/users/register/), put it in a `.env` file at the repo root as `TNG_API_KEY=...` (the `.env` file is gitignored — never commit it), and run `src/download_data.py`.
 
 ## Pipeline
 
 ```bash
-.venv/bin/python src/download_data.py   # streams the TNG100-1 z=0 group catalog,
-                                        # keeps only central galaxies -> data/*.csv (~10 MB)
+.venv/bin/python src/download_data.py   # (optional, needs API key) rebuild data/*.csv
 .venv/bin/python src/train_models.py    # baseline + ridge/random forest/gradient boosting
 .venv/bin/python src/make_figures.py    # plots in results/figures/
 ```
